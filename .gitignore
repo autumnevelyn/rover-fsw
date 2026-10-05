@@ -1,0 +1,20 @@
+# Build
+build/
+*.o
+*.a
+*.so
+
+# ESP-IDF
+sdkconfig
+sdkconfig.old
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Host build
+host/rover_host
