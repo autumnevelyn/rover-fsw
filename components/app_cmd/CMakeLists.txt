@@ -1,3 +1,3 @@
 idf_component_register(SRCS "cmd_task.c"
                        INCLUDE_DIRS "include"
-                       REQUIRES osal sb rover_msgs)
+                       REQUIRES osal core_sb core_msgs)

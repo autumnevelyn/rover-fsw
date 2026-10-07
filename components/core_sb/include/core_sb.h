@@ -1,4 +1,4 @@
-/* sb.h - Software Bus: publish/subscribe message routing (cFS-style).
+/* core_sb.h - Software Bus: publish/subscribe message routing (cFS-style).
  * Apps never call each other; they subscribe to APIDs and publish to APIDs.
  * Built only on osal.h, so it runs unchanged on ESP-IDF and on the host. */
 #ifndef SB_H

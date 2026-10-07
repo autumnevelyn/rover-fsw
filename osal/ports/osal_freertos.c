@@ -1,5 +1,4 @@
-/* osal_freertos.c - OSAL port for ESP-IDF / FreeRTOS (flight target).
- * Not yet compiled on hardware: first build on the ESP32-S3 may need small fixes. */
+/* osal_freertos.c - OSAL port for ESP-IDF / FreeRTOS (systems target). */
 #include "osal.h"
 
 #include <stdarg.h>
@@ -13,22 +12,26 @@
 #include "esp_log.h"
 #include "esp_timer.h"
 
+// todo: additional abstraction layer should be added for HW level, ie. GPIO, I2C...
+
 struct osal_task  { TaskHandle_t h; osal_task_fn fn; void *arg; };
 struct osal_queue { QueueHandle_t q; size_t item_size; };
 struct osal_mutex { SemaphoreHandle_t m; };
+
+/* ---- TIME ---- */
 
 static TickType_t to_ticks(osal_ms_t t)
 {
     return (t == OSAL_WAIT_FOREVER) ? portMAX_DELAY : pdMS_TO_TICKS(t);
 }
 
-/* ---- time ---- */
 osal_ms_t osal_time_ms(void)
 {
     return (osal_ms_t)(esp_timer_get_time() / 1000);
 }
 
-/* ---- tasks ---- */
+/* ---- TASKS ---- */
+
 static UBaseType_t map_prio(osal_prio_t p)
 {
     switch (p) {
@@ -40,21 +43,22 @@ static UBaseType_t map_prio(osal_prio_t p)
     }
 }
 
+// compatibility wrapper for osal_task
 static void trampoline(void *p)
 {
     struct osal_task *t = p;
-    t->fn(t->arg);
+    t->fn(t->arg); // calls the osal task with osal arg
     vTaskDelete(NULL);
 }
 
-osal_status_t osal_task_create(osal_task_t *out, const osal_task_attr_t *attr,
-                               osal_task_fn fn, void *arg)
+osal_status_t osal_task_create(osal_task_t *out, const osal_task_attr_t *attr, osal_task_fn fn, void *arg)
 {
     if (!out || !attr || !fn) return OSAL_ERR_INVALID;
+
     struct osal_task *t = calloc(1, sizeof *t);
     if (!t) return OSAL_ERR_NOMEM;
+
     t->fn = fn; t->arg = arg;
-    /* ESP-IDF's xTaskCreate takes the stack size in bytes. */
     if (xTaskCreate(trampoline, attr->name, attr->stack_bytes, t,
                     map_prio(attr->priority), &t->h) != pdPASS) {
         free(t);
@@ -76,7 +80,8 @@ void osal_task_delay_until(osal_ms_t *last_wake_ms, osal_ms_t period_ms)
     *last_wake_ms = target;
 }
 
-/* ---- queues ---- */
+/* ---- QUEUES ---- */
+
 osal_status_t osal_queue_create(osal_queue_t *out, size_t item_size, size_t depth)
 {
     if (!out || !item_size || !depth) return OSAL_ERR_INVALID;
@@ -115,7 +120,8 @@ size_t osal_queue_count(osal_queue_t q)
     return q ? (size_t)uxQueueMessagesWaiting(q->q) : 0;
 }
 
-/* ---- mutex ---- */
+/* ---- MUTEX ---- */
+
 osal_status_t osal_mutex_create(osal_mutex_t *out)
 {
     if (!out) return OSAL_ERR_INVALID;
@@ -143,7 +149,8 @@ osal_status_t osal_mutex_lock(osal_mutex_t m, osal_ms_t timeout)
 
 void osal_mutex_unlock(osal_mutex_t m) { if (m) xSemaphoreGive(m->m); }
 
-/* ---- logging ---- */
+/* ---- LOGGING ---- */
+
 void osal_log(osal_log_level_t level, const char *tag, const char *fmt, ...)
 {
     char buf[192];

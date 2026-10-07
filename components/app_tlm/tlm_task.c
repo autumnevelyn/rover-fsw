@@ -4,7 +4,7 @@
 #include "tlm_app.h"
 #include "apid.h"
 #include "msgs.h"
-#include "sb.h"
+#include "core_sb.h"
 #include <string.h>
 
 #define TAG "TLM"

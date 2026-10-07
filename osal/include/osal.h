@@ -1,5 +1,5 @@
 /*
- * osal.h - Rover OS Abstraction Layer (Stage 1 minimum)
+ * osal.h - OS Abstraction Layer (Stage 1 minimum)
  *
  * Rules:
  *  - Apps include ONLY this header, never FreeRTOS/ESP-IDF/pthread headers.

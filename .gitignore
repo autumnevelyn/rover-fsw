@@ -17,4 +17,4 @@ sdkconfig.old
 *~
 
 # Host build
-host/rover_host
+host/fsw_host

@@ -1,7 +1,7 @@
-#ifndef ROVER_H
-#define ROVER_H
+#ifndef FSW_H
+#define FSW_H
 
 /* Initialises the software bus and starts every app (scheduler last). */
-void rover_start(void);
+void fsw_start(void);
 
 #endif

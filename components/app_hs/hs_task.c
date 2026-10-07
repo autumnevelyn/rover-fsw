@@ -3,7 +3,7 @@
 #include "hs_app.h"
 #include "apid.h"
 #include "msgs.h"
-#include "sb.h"
+#include "core_sb.h"
 
 #define TAG "H&S"
 

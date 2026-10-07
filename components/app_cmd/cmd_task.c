@@ -3,7 +3,7 @@
  * check -> APID whitelist -> SB_Publish, plus an ack/nak on APID_CMD_ACK_TLM. */
 #include "cmd_app.h"
 #include "apid.h"
-#include "sb.h"
+#include "core_sb.h"
 
 #define TAG "CMD"
 

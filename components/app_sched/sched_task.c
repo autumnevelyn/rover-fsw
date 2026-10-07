@@ -2,7 +2,7 @@
 #include "sched_app.h"
 #include "apid.h"
 #include "msgs.h"
-#include "sb.h"
+#include "core_sb.h"
 
 #define TAG "SCH"
 #define MAJOR_FRAME_MS 1000
